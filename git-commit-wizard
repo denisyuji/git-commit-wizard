@@ -5,6 +5,32 @@
 
 set -euo pipefail
 
+VERSION="0.1.1"
+
+usage() {
+  echo "Usage: git-commit-wizard [--help] [--version]"
+  echo
+  echo "Generate a commit message using OpenAI based on staged changes."
+  echo "Make sure to stage your changes with 'git add' before running this tool."
+  echo
+  echo "Options:"
+  echo "  --help     Show this help message and exit."
+  echo "  --version  Show the script version and exit."
+}
+
+for arg in "$@"; do
+  case $arg in
+    --help)
+      usage
+      exit 0
+      ;;
+    --version)
+      echo "git-commit-wizard version $VERSION"
+      exit 0
+      ;;
+  esac
+done
+
 # Ensure necessary commands are available.
 command -v git >/dev/null || { echo "git is required but not installed."; exit 1; }
 command -v curl >/dev/null || { echo "curl is required but not installed."; exit 1; }

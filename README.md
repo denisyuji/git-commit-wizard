@@ -1,7 +1,7 @@
 # git-commit-wizard
 
 ## Overview
-`git-commit-wizard` is a command-line tool that leverages the OpenAI API to generate commit messages for your git repository. It analyzes your staged changes, gathers contextual information (including the repository's origin URL), and produces a commit message following the Linux project commit message guidelines.
+`git-commit-wizard` is a command-line tool to generate commit messages for staged changes on your git repository. 
 
 ## Features
 - Uses the cost-effective gpt-4o-mini to generate commit messages.
@@ -59,6 +59,9 @@ For more information on using the OpenAI API key:
 
 ## Usage
 
+You can run `git-commit-wizard --help` to display usage instructions, or
+use `git-commit-wizard --version` to check the current version of the tool.
+
 1. **Stage Changes:**  
    Stage your changes with git:
 
@@ -82,12 +85,6 @@ git-commit-wizard
 
 4. **Review Commit Message:**  
    The generated commit message will open in your chosen text editor for review and modification. Save and close the editor to finalize the commit with `--signoff`.
-
-## Commit Message Guidelines
-
-- The commit title must follow the format: "subject: description" and be no more than 50 characters in total.
-- There must be a blank line between the title and the commit body.
-- If a detailed description is needed, the commit body should have lines wrapped at 72 characters.
 
 ## Contributing
 
