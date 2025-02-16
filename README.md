@@ -95,7 +95,7 @@ Contributions are welcome! Please fork the repository and submit a pull request 
 
 ## Initial Version
 
-This is the initial version of `git-commit-wizard`. It lays the foundation for automated, guideline-adherent commit messages by leveraging OpenAI's API. Future improvements may include enhanced context analysis, better error handling, and additional customization options.
+- v0.1.0: This is the initial version of `git-commit-wizard`. It lays the foundation for automated, guideline-adherent commit messages by leveraging OpenAI's API. Future improvements may include enhanced context analysis, better error handling, and additional customization options.
 
 ## License
 
