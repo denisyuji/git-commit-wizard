@@ -47,10 +47,12 @@ Origin URL: $origin_url
 
 I have staged the following changes on branch '$current_branch' in my git repository.
 The changes include modifications, additions, or removals in one or more files.
-Please generate a commit message that adheres to the Linux project commit guidelines:
-  - Use a short subject line (preferably under 50 characters) in the imperative mood.
-  - Leave a blank line after the subject.
-  - Optionally follow with a detailed description wrapped at 72 characters per line if needed.
+Please generate a commit message that adheres to the Linux project commit guidelines with the following requirements:
+  - The commit title must be in the format 'subject: description'.
+  - The entire title (subject line) must be no more than 50 characters.
+  - Use the imperative mood in the title.
+  - Leave a blank line after the title.
+  - If a detailed description is needed, format the commit body with lines wrapped at 72 characters.
   - Use clear and concise language that summarizes what was changed and why.
   - Do not include any markdown formatting (e.g. triple backticks or code fences).
 
