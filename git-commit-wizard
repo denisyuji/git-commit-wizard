@@ -52,7 +52,7 @@ Please generate a commit message that adheres to the Linux project commit guidel
   - The entire title (subject line) must be no more than 50 characters.
   - Use the imperative mood in the title.
   - Leave a blank line after the title.
-  - If a detailed description is needed, format the commit body with lines wrapped at 72 characters.
+  - Format the commit description body with lines no more than 50 characters.
   - Use clear and concise language that summarizes what was changed and why.
   - Do not include any markdown formatting (e.g. triple backticks or code fences).
 
