@@ -104,11 +104,11 @@ echo "----------------------------------------"
 echo "Opening commit message in your editor for review and modification."
 echo "Save and close the editor when ready to commit."
 
-# Open the commit message in your editor (defaulting to vi if $EDITOR isn’t set).
-${EDITOR:-vi} "$temp_msg_file"
+# Determine which editor to use: prefer GIT_EDITOR over EDITOR.
+editor="${GIT_EDITOR:-${EDITOR:-vi}}"
+"$editor" "$temp_msg_file"
 
-# Commit using the reviewed message and include --signoff.
-# Removed --edit flag to avoid opening the editor a second time.
+# Commit using the reviewed message and include --signoff (without reopening the editor).
 git commit --signoff -F "$temp_msg_file"
 
 # Clean up the temporary file.
