@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # git-commit-wizard: Generate a commit message using OpenAI based on staged diff and original file content.
 # The commit message will adhere to Linux project commit message guidelines.
-# Uses the cost-effective gpt-4o-mini model (gpt-4o-mini-2024-07-18 variant).
+# Uses the cost-effective gpt-4o-mini model (gpt-4o-mini).
 
 set -euo pipefail
 
@@ -64,7 +64,7 @@ Please provide a plain text commit message following these guidelines."
   
 # Construct the JSON payload using jq with the cost-effective model.
 payload=$(jq -n --arg prompt "$prompt" '{
-  model: "gpt-4o-mini-2024-07-18",
+  model: "gpt-4o-mini",
   messages: [
     {role: "system", content: "You are a helpful commit message generator."},
     {role: "user", content: $prompt}
@@ -105,7 +105,7 @@ echo "Opening commit message in your editor for review and modification."
 echo "Save and close the editor when ready to commit."
 
 # Determine which editor to use: prefer GIT_EDITOR over EDITOR.
-editor="${GIT_EDITOR:-${EDITOR:-vi}}"
+editor="${GIT_EDITOR:-${EDITOR:-vim}}"
 "$editor" "$temp_msg_file"
 
 # Commit using the reviewed message and include --signoff (without reopening the editor).
