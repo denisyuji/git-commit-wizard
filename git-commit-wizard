@@ -1,0 +1,114 @@
+#!/usr/bin/env bash
+# git-commit-wizard: Generate a commit message using OpenAI based on staged diff and original file content.
+# The commit message will adhere to Linux project commit message guidelines.
+# Uses the cost-effective gpt-4o-mini model (gpt-4o-mini-2024-07-18 variant).
+
+set -euo pipefail
+
+# Ensure necessary commands are available.
+command -v git >/dev/null || { echo "git is required but not installed."; exit 1; }
+command -v curl >/dev/null || { echo "curl is required but not installed."; exit 1; }
+command -v jq >/dev/null || { echo "jq is required but not installed."; exit 1; }
+
+# Check for OpenAI API key.
+if [ -z "${OPENAI_API_KEY:-}" ]; then
+  echo "Error: OPENAI_API_KEY is not set. Please export your API key before running this script."
+  exit 1
+fi
+
+# Verify that there are staged changes.
+if git diff --cached --quiet; then
+  echo "No staged changes detected. Please stage your changes before running git-commit-wizard."
+  exit 1
+fi
+
+# Retrieve the repository's origin URL (if available).
+origin_url=$(git config --get remote.origin.url || echo "Not available")
+
+# Collect the diff of staged changes.
+diff_content=$(git diff --cached)
+
+# Collect original file contents (from HEAD) for each staged file.
+originals=""
+for file in $(git diff --cached --name-only); do
+  # Check if the file exists in HEAD (skip new files).
+  if git ls-files --error-unmatch "$file" >/dev/null 2>&1; then
+    orig=$(git show HEAD:"$file")
+    originals+="\n===== $file =====\n$orig\n"
+  fi
+done
+
+# Determine the current branch for additional context.
+current_branch=$(git rev-parse --abbrev-ref HEAD)
+
+# Prepare the prompt for the OpenAI API with extra context.
+prompt="Project: git-commit-wizard
+Origin URL: $origin_url
+
+I have staged the following changes on branch '$current_branch' in my git repository.
+The changes include modifications, additions, or removals in one or more files.
+Please generate a commit message that adheres to the Linux project commit guidelines:
+  - Use a short subject line (preferably under 50 characters) in the imperative mood.
+  - Leave a blank line after the subject.
+  - Optionally follow with a detailed description wrapped at 72 characters per line if needed.
+  - Use clear and concise language that summarizes what was changed and why.
+  - Do not include any markdown formatting (e.g. triple backticks or code fences).
+
+Below is the diff of the staged changes:
+$diff_content
+
+Additionally, here are the original contents of the files before the changes for context:
+$originals
+
+Please provide a plain text commit message following these guidelines."
+  
+# Construct the JSON payload using jq with the cost-effective model.
+payload=$(jq -n --arg prompt "$prompt" '{
+  model: "gpt-4o-mini-2024-07-18",
+  messages: [
+    {role: "system", content: "You are a helpful commit message generator."},
+    {role: "user", content: $prompt}
+  ]
+}')
+
+# Call the OpenAI API.
+response=$(curl -sS https://api.openai.com/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer $OPENAI_API_KEY" \
+  -d "$payload")
+
+# Extract the generated commit message from the response.
+commit_message=$(echo "$response" | jq -r '.choices[0].message.content')
+
+# If no commit message is returned, try to display the error message from OpenAI.
+if [ -z "$commit_message" ] || [ "$commit_message" == "null" ]; then
+  openai_error=$(echo "$response" | jq -r '.error.message // empty')
+  if [ -n "$openai_error" ]; then
+    echo "OpenAI API error: $openai_error"
+  else
+    echo "Failed to generate a commit message from the OpenAI API. Please check your API key and network connection."
+  fi
+  exit 1
+fi
+
+# Write the commit message to a temporary file.
+temp_msg_file=$(mktemp /tmp/commit_message.XXXXXX)
+echo "$commit_message" > "$temp_msg_file"
+
+# Show the generated commit message.
+echo "----------------------------------------"
+echo "Generated commit message:"
+echo "----------------------------------------"
+cat "$temp_msg_file"
+echo "----------------------------------------"
+echo "Opening commit message in your editor for review and modification."
+echo "Save and close the editor when ready to commit."
+
+# Open the commit message in your editor (defaulting to vi if $EDITOR isn’t set).
+${EDITOR:-vi} "$temp_msg_file"
+
+# Commit using the reviewed message and include --signoff.
+git commit --signoff --edit -F "$temp_msg_file"
+
+# Clean up the temporary file.
+rm "$temp_msg_file"
