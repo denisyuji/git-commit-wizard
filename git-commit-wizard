@@ -105,7 +105,7 @@ echo "Opening commit message in your editor for review and modification."
 echo "Save and close the editor when ready to commit."
 
 # Determine which editor to use: prefer GIT_EDITOR over EDITOR.
-editor="${GIT_EDITOR:-${EDITOR:-vim}}"
+editor="${GIT_EDITOR:-${EDITOR:-nano}}"
 "$editor" "$temp_msg_file"
 
 # Commit using the reviewed message and include --signoff (without reopening the editor).
