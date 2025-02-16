@@ -31,8 +31,8 @@ diff_content=$(git diff --cached)
 # Collect original file contents (from HEAD) for each staged file.
 originals=""
 for file in $(git diff --cached --name-only); do
-  # Check if the file exists in HEAD (skip new files).
-  if git ls-files --error-unmatch "$file" >/dev/null 2>&1; then
+  # Only get original contents if the file exists in HEAD.
+  if git cat-file -e HEAD:"$file" 2>/dev/null; then
     orig=$(git show HEAD:"$file")
     originals+="\n===== $file =====\n$orig\n"
   fi
@@ -108,7 +108,8 @@ echo "Save and close the editor when ready to commit."
 ${EDITOR:-vi} "$temp_msg_file"
 
 # Commit using the reviewed message and include --signoff.
-git commit --signoff --edit -F "$temp_msg_file"
+# Removed --edit flag to avoid opening the editor a second time.
+git commit --signoff -F "$temp_msg_file"
 
 # Clean up the temporary file.
 rm "$temp_msg_file"
