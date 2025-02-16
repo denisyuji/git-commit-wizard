@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # git-commit-wizard: Generate a commit message using OpenAI based on staged diff and original file content.
 # The commit message will adhere to Linux project commit message guidelines.
-# Uses the cost-effective gpt-4o-mini model (gpt-4o-mini).
+# Uses the cost-effective gpt-4o-mini model (gpt-4o-mini-2024-07-18 variant).
 
 set -euo pipefail
 
@@ -64,7 +64,7 @@ Please provide a plain text commit message following these guidelines."
   
 # Construct the JSON payload using jq with the cost-effective model.
 payload=$(jq -n --arg prompt "$prompt" '{
-  model: "gpt-4o-mini",
+  model: "gpt-4o-mini-2024-07-18",
   messages: [
     {role: "system", content: "You are a helpful commit message generator."},
     {role: "user", content: $prompt}
@@ -104,11 +104,28 @@ echo "----------------------------------------"
 echo "Opening commit message in your editor for review and modification."
 echo "Save and close the editor when ready to commit."
 
-# Determine which editor to use: prefer GIT_EDITOR over EDITOR.
-editor="${GIT_EDITOR:-${EDITOR:-nano}}"
-"$editor" "$temp_msg_file"
+# Determine which editor to use.
+if [ -n "${EDITOR:-}" ]; then
+    editor="$EDITOR"
+else
+    # Detect if running on Windows (using $OSTYPE or $OS)
+    if [[ "$OSTYPE" == "msys" || "$OSTYPE" == "cygwin" || "${OS:-}" == "Windows_NT" ]]; then
+        editor="notepad"
+    else
+        if command -v nano >/dev/null 2>&1; then
+            editor="nano"
+        elif command -v vim >/dev/null 2>&1; then
+            editor="vim"
+        else
+            editor="vi"
+        fi
+    fi
+fi
 
-# Commit using the reviewed message and include --signoff (without reopening the editor).
+# Open the commit message in the chosen editor.
+$editor "$temp_msg_file"
+
+# Commit using the reviewed message and include --signoff.
 git commit --signoff -F "$temp_msg_file"
 
 # Clean up the temporary file.
