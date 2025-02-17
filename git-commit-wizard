@@ -1,11 +1,12 @@
 #!/usr/bin/env bash
 # git-commit-wizard: Generate a commit message using OpenAI based on staged diff and original file content.
 # The commit message will adhere to Linux project commit message guidelines.
-# Uses the cost-effective gpt-4o-mini model.
 
 set -euo pipefail
 
 VERSION="0.1.1"
+
+OPENAI_MODEL="gpt-4o-mini"
 
 usage() {
   echo "Usage: git-commit-wizard [--help] [--version]"
@@ -109,7 +110,7 @@ echo "$prompt" > "$prompt_file"
 
 # Use --rawfile to load the entire prompt from that file
 jq_output=$(jq -n --rawfile prompt "$prompt_file" '{
-  model: "gpt-4o-mini",
+  model: "'$OPENAI_MODEL'",
   messages: [
     {role: "system", content: "You are a helpful commit message generator."},
     {role: "user", content: $prompt}
