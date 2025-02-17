@@ -52,11 +52,15 @@ fi
 origin_url=$(git config --get remote.origin.url || echo "Not available")
 
 # Collect the diff of staged changes.
-diff_content=$(git diff --cached)
+diff_content=$(git diff --cached | head -n 500)
 
 # Collect original file contents (from HEAD) for each staged file.
 originals=""
 for file in $(git diff --cached --name-only); do
+  # Skip big files or those known to be auto-generated:
+  if [[ "$file" == *".min.js" ]] || [[ "$file" == *"dist"* ]]; then
+    continue
+  fi
   # Check if this file is recognized as binary in the diff
   if git diff --cached -- "$file" | grep -q "Binary files"; then
     # Skip binary files
@@ -68,7 +72,7 @@ for file in $(git diff --cached --name-only); do
     # Retrieve the original file contents. If you worry about null bytes in
     # partially text-based files, you can also strip them out with tr:
     # orig=$(git show HEAD:"$file" | tr -d '\0')
-    orig=$(git show HEAD:"$file")
+    orig=$(git show HEAD:"$file" | head -n 50)
     originals+="\n===== $file =====\n$orig\n"
   fi
 done
