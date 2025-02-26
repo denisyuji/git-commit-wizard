@@ -70,8 +70,12 @@ if git rev-parse --verify HEAD >/dev/null 2>&1; then
       # Skip binary files
       continue
     fi
-    orig=$(git show HEAD:"$file")
-    originals+="\n===== $file =====\n$orig\n"
+    if git cat-file -e HEAD:"$file" 2>/dev/null; then
+      orig=$(git show HEAD:"$file")
+      originals+="\n===== $file =====\n$orig\n"
+    else
+      originals+="\n===== $file =====\nNew file, no original content.\n"
+    fi
   done
 else
   originals="No previous commit available. All files are new."
