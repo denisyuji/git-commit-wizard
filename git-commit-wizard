@@ -57,29 +57,32 @@ diff_content=$(git diff --cached)
 
 # Collect original file contents (from HEAD) for each staged file.
 originals=""
-for file in $(git diff --cached --name-only); do
-  # Skip big files or those known to be auto-generated:
-  if [[ "$file" == *".min.js" ]] || [[ "$file" == *"dist"* ]]; then
-    continue
-  fi
-  # Check if this file is recognized as binary in the diff
-  if git diff --cached -- "$file" | grep -q "Binary files"; then
-    # Skip binary files
-    continue
-  fi
-
-  # Only get original contents if the file exists in HEAD
-  if git cat-file -e HEAD:"$file" 2>/dev/null; then
-    # Retrieve the original file contents. If you worry about null bytes in
-    # partially text-based files, you can also strip them out with tr:
-    # orig=$(git show HEAD:"$file" | tr -d '\0')
+# Collect original file contents (from HEAD) for each staged file.
+if git rev-parse --verify HEAD >/dev/null 2>&1; then
+  originals=""
+  for file in $(git diff --cached --name-only); do
+    # Skip big files or those known to be auto-generated:
+    if [[ "$file" == *".min.js" ]] || [[ "$file" == *"dist"* ]]; then
+      continue
+    fi
+    # Check if this file is recognized as binary in the diff
+    if git diff --cached -- "$file" | grep -q "Binary files"; then
+      # Skip binary files
+      continue
+    fi
     orig=$(git show HEAD:"$file")
     originals+="\n===== $file =====\n$orig\n"
-  fi
-done
+  done
+else
+  originals="No previous commit available. All files are new."
+fi
 
 # Determine the current branch for additional context.
-current_branch=$(git rev-parse --abbrev-ref HEAD)
+if git rev-parse --verify HEAD >/dev/null 2>&1; then
+  current_branch=$(git rev-parse --abbrev-ref HEAD)
+else
+  current_branch="(initial commit)"
+fi
 
 # Prepare the prompt for the OpenAI API with extra context.
 prompt="Project: git-commit-wizard
