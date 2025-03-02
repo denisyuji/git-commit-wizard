@@ -13,6 +13,7 @@
 - Allows manual review and editing of the generated commit message before committing.
 - Automatically signs off commits using --signoff.
 - Supports multiple editors, defaulting to the editor specified by the $EDITOR environment variable, nano, vim, or vi on Unix-like systems, and notepad on Windows.
+- **New:** Supports an optional `-m` flag to provide additional context to the IA for commit message generation.
 
 ## Installation
 
@@ -83,7 +84,14 @@ export OPENAI_API_KEY=your_openai_api_key_here
 git-commit-wizard
 ```
 
-4. **Review Commit Message:**  
+4. **(Optional) Provide Additional Context:**  
+   Use the `-m` flag to provide extra details for the commit message:
+
+```
+git-commit-wizard -m "Refactored authentication module for better security."
+```
+
+5. **Review Commit Message:**  
    The generated commit message will open in your chosen text editor for review and modification. Save and close the editor to finalize the commit with `--signoff`.
 
 ## Contributing
@@ -93,6 +101,7 @@ Contributions are welcome! Please fork the repository and submit a pull request 
 ## Initial Version
 
 - v0.1.0: This is the initial version of `git-commit-wizard`. It lays the foundation for automated, guideline-adherent commit messages by leveraging OpenAI's API. Future improvements may include enhanced context analysis, better error handling, and additional customization options.
+- v0.1.2: Added support for the `-m` flag, allowing users to provide additional instructions for the AI-generated commit message.
 
 ## License
 

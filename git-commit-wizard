@@ -4,19 +4,20 @@
 
 set -euo pipefail
 
-VERSION="0.1.1"
+VERSION="0.1.2"
 
 OPENAI_MODEL="gpt-4o-mini"
 
 usage() {
-  echo "Usage: git-commit-wizard [--help] [--version]"
+  echo "Usage: git-commit-wizard [--help] [--version] [-m <additional context message>]"
   echo
-  echo "Generate a commit message using OpenAI based on staged changes."
+  echo "Generate a commit message using OpenAI API."
   echo "Make sure to stage your changes with 'git add' before running this tool."
   echo
   echo "Options:"
   echo "  --help     Show this help message and exit."
   echo "  --version  Show the script version and exit."
+  echo "  -m <message>  Provide additional context to the IA for the commit message generation."
 }
 
 for arg in "$@"; do
@@ -28,6 +29,20 @@ for arg in "$@"; do
     --version)
       echo "git-commit-wizard version $VERSION"
       exit 0
+      ;;
+    -m)
+      if [[ -n "${2:-}" ]]; then
+        additional_message="$2"
+        shift 2
+      else
+        echo "Error: -m flag requires a message argument."
+        exit 1
+      fi
+      ;;
+    *)
+      echo "Unknown option: $1"
+      usage
+      exit 1
       ;;
   esac
 done
@@ -82,11 +97,7 @@ else
 fi
 
 # Determine the current branch for additional context.
-if git rev-parse --verify HEAD >/dev/null 2>&1; then
-  current_branch=$(git rev-parse --abbrev-ref HEAD)
-else
-  current_branch="(initial commit)"
-fi
+current_branch=$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "(initial commit)")
 
 # Prepare the prompt for the OpenAI API with extra context.
 prompt="Project: git-commit-wizard
@@ -108,6 +119,8 @@ $diff_content
 
 Additionally, here are the original contents of the files before the changes for context:
 $originals
+
+Additional user-provided context: $additional_message
 
 Please provide a plain text commit message following these guidelines."
   
