@@ -4,29 +4,31 @@
 
 set -euo pipefail
 
-VERSION="0.1.2"
+VERSION="0.1.3"
 
 OPENAI_MODEL="gpt-4o-mini"
 
 usage() {
-  echo "Usage: git-commit-wizard [--help] [--version] [-m <additional context message>]"
+  echo "Usage: git-commit-wizard [options]"
   echo
-  echo "Generate a commit message using OpenAI API."
+  echo "Generate a commit message using OpenAI based on staged changes."
   echo "Make sure to stage your changes with 'git add' before running this tool."
   echo
   echo "Options:"
-  echo "  --help     Show this help message and exit."
-  echo "  --version  Show the script version and exit."
-  echo "  -m <message>  Provide additional context to the IA for the commit message generation."
+  echo "  -h, --help      Show this help message and exit."
+  echo "  -v, --version   Show the script version and exit."
+  echo "  -m <message>    Provide additional context for the commit message."
 }
 
-for arg in "$@"; do
-  case $arg in
-    --help)
+additional_message=""
+
+while [[ $# -gt 0 ]]; do
+  case $1 in
+    -h|--help)
       usage
       exit 0
       ;;
-    --version)
+    -v|--version)
       echo "git-commit-wizard version $VERSION"
       exit 0
       ;;

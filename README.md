@@ -13,7 +13,10 @@
 - Allows manual review and editing of the generated commit message before committing.
 - Automatically signs off commits using --signoff.
 - Supports multiple editors, defaulting to the editor specified by the $EDITOR environment variable, nano, vim, or vi on Unix-like systems, and notepad on Windows.
-- **New:** Supports an optional `-m` flag to provide additional context to the IA for commit message generation.
+- **New:** Supports optional flags for enhanced usability:
+  - `-m <message>`: Provide additional context for commit message generation.
+  - `-v`, `--version`: Display the version of the tool.
+  - `-h`, `--help`: Show usage instructions.
 
 ## Installation
 
@@ -63,6 +66,18 @@ For more information on using the OpenAI API key:
 You can run `git-commit-wizard --help` to display usage instructions, or
 use `git-commit-wizard --version` to check the current version of the tool.
 
+### Command-line Options
+```
+Usage: git-commit-wizard [options]
+
+Options:
+  -h, --help     Show this help message and exit.
+  -v, --version  Show the script version and exit.
+  -m <message>   Provide additional context for the commit message.
+```
+
+### Example Usage
+
 1. **Stage Changes:**  
    Stage your changes with git:
 
@@ -91,7 +106,21 @@ git-commit-wizard
 git-commit-wizard -m "Refactored authentication module for better security."
 ```
 
-5. **Review Commit Message:**  
+5. **Check Version:**  
+   Display the current version of the tool:
+
+```
+git-commit-wizard -v
+```
+
+6. **Show Help:**  
+   Display usage instructions:
+
+```
+git-commit-wizard -h
+```
+
+7. **Review Commit Message:**  
    The generated commit message will open in your chosen text editor for review and modification. Save and close the editor to finalize the commit with `--signoff`.
 
 ## Contributing
@@ -102,6 +131,7 @@ Contributions are welcome! Please fork the repository and submit a pull request 
 
 - v0.1.0: This is the initial version of `git-commit-wizard`. It lays the foundation for automated, guideline-adherent commit messages by leveraging OpenAI's API. Future improvements may include enhanced context analysis, better error handling, and additional customization options.
 - v0.1.2: Added support for the `-m` flag, allowing users to provide additional instructions for the AI-generated commit message.
+- v0.1.3: Introduced `-v`, `--version`, `-h`, and `--help` flags for improved usability.
 
 ## License
 
