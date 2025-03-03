@@ -1,7 +1,7 @@
 # git-commit-wizard
 
 ## Overview
-`git-commit-wizard` is a command-line tool to generate commit messages for staged changes on your git repository. 
+`git-commit-wizard` is a command-line tool to generate commit messages for staged changes on your git repository.
 
 ## Features
 - Uses the cost-effective gpt-4o-mini to generate commit messages.
@@ -20,24 +20,24 @@
 
 ## Installation
 
-1. **Prerequisites:** 
+1. **Prerequisites:**
    Ensure you have git, curl, and jq installed on your system.
 
-2. **Make Executable:**  
+2. **Make Executable:**
    Make the `git-commit-wizard` executable:
 
 ```
 chmod +x git-commit-wizard
 ```
 
-3. **Place on PATH:**  
+3. **Place on PATH:**
    Move the script to a directory in your PATH (e.g., /usr/local/bin):
 
 ```
 mv git-commit-wizard /usr/local/bin/
 ```
 
-4. **Optional: Preferred Editor:**  
+4. **Optional: Preferred Editor:**
   Set your preferred text editor by exporting the EDITOR environment variable:
 
 ```
@@ -46,7 +46,7 @@ export EDITOR=nano
 ## API Key Setup
 
 To use `git-commit-wizard`, you need an API key from OpenAI. If you don't already have one, follow these steps:
-1. Visit the OpenAI API dashboard at:  
+1. Visit the OpenAI API dashboard at:
    https://platform.openai.com/account/api-keys
 2. Sign in or create an account.
 3. Create a new secret API key.
@@ -78,49 +78,49 @@ Options:
 
 ### Example Usage
 
-1. **Stage Changes:**  
+1. **Stage Changes:**
    Stage your changes with git:
 
 ```
 git add .
 ```
 
-2. **Set API Key:**  
+2. **Set API Key:**
    Export your OpenAI API key in your shell:
 
 ```
 export OPENAI_API_KEY=your_openai_api_key_here
 ```
 
-3. **Run the Tool:**  
+3. **Run the Tool:**
    Execute the script:
 
 ```
 git-commit-wizard
 ```
 
-4. **(Optional) Provide Additional Context:**  
+4. **(Optional) Provide Additional Context:**
    Use the `-m` flag to provide extra details for the commit message:
 
 ```
 git-commit-wizard -m "Refactored authentication module for better security."
 ```
 
-5. **Check Version:**  
+5. **Check Version:**
    Display the current version of the tool:
 
 ```
 git-commit-wizard -v
 ```
 
-6. **Show Help:**  
+6. **Show Help:**
    Display usage instructions:
 
 ```
 git-commit-wizard -h
 ```
 
-7. **Review Commit Message:**  
+7. **Review Commit Message:**
    The generated commit message will open in your chosen text editor for review and modification. Save and close the editor to finalize the commit with `--signoff`.
 
 ## Contributing

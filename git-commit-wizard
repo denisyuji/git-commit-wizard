@@ -74,17 +74,12 @@ diff_content=$(git diff --cached)
 
 # Collect original file contents (from HEAD) for each staged file.
 originals=""
-# Collect original file contents (from HEAD) for each staged file.
 if git rev-parse --verify HEAD >/dev/null 2>&1; then
-  originals=""
   for file in $(git diff --cached --name-only); do
-    # Skip big files or those known to be auto-generated:
     if [[ "$file" == *".min.js" ]] || [[ "$file" == *"dist"* ]]; then
       continue
     fi
-    # Check if this file is recognized as binary in the diff
     if git diff --cached -- "$file" | grep -q "Binary files"; then
-      # Skip binary files
       continue
     fi
     if git cat-file -e HEAD:"$file" 2>/dev/null; then
@@ -125,7 +120,7 @@ $originals
 Additional user-provided context: $additional_message
 
 Please provide a plain text commit message following these guidelines."
-  
+
 # Write the entire prompt to a temporary file
 prompt_file=$(mktemp)
 echo "$prompt" > "$prompt_file"
