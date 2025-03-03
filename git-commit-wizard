@@ -4,7 +4,7 @@
 
 set -euo pipefail
 
-VERSION="0.1.3"
+VERSION="0.1.4"
 
 OPENAI_MODEL="gpt-4o-mini"
 
@@ -18,9 +18,11 @@ usage() {
   echo "  -h, --help      Show this help message and exit."
   echo "  -v, --version   Show the script version and exit."
   echo "  -m <message>    Provide additional context for the commit message."
+  echo "  -r, --revert    Revert the last commit, keep changes staged."
 }
 
 additional_message=""
+revert=false
 
 while [[ $# -gt 0 ]]; do
   case $1 in
@@ -41,6 +43,10 @@ while [[ $# -gt 0 ]]; do
         exit 1
       fi
       ;;
+    -r|--revert)
+      revert=true
+      shift
+      ;;
     *)
       echo "Unknown option: $1"
       usage
@@ -51,6 +57,19 @@ done
 
 # Ensure necessary commands are available.
 command -v git >/dev/null || { echo "git is required but not installed."; exit 1; }
+
+if $revert; then
+  if git rev-parse --verify HEAD >/dev/null 2>&1; then
+    echo "Reverting last commit but keeping changes staged..."
+    git reset --soft HEAD^
+    echo "Revert complete. Changes are staged but not committed."
+    exit 0
+  else
+    echo "Error: No previous commit to revert."
+    exit 1
+  fi
+fi
+
 command -v curl >/dev/null || { echo "curl is required but not installed."; exit 1; }
 command -v jq >/dev/null || { echo "jq is required but not installed."; exit 1; }
 

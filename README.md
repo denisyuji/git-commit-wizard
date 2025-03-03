@@ -17,6 +17,7 @@
   - `-m <message>`: Provide additional context for commit message generation.
   - `-v`, `--version`: Display the version of the tool.
   - `-h`, `--help`: Show usage instructions.
+  - `-r`, `--revert`: Revert the last commit while keeping changes staged.
 
 ## Installation
 
@@ -74,6 +75,7 @@ Options:
   -h, --help     Show this help message and exit.
   -v, --version  Show the script version and exit.
   -m <message>   Provide additional context for the commit message.
+  -r, --revert   Revert the last commit while keeping changes staged.
 ```
 
 ### Example Usage
@@ -120,7 +122,14 @@ git-commit-wizard -v
 git-commit-wizard -h
 ```
 
-7. **Review Commit Message:**
+7. **Revert Last Commit:**
+   Revert the last commit while keeping the changes staged:
+
+```
+git-commit-wizard -r
+```
+
+8. **Review Commit Message:**
    The generated commit message will open in your chosen text editor for review and modification. Save and close the editor to finalize the commit with `--signoff`.
 
 ## Contributing
@@ -132,7 +141,12 @@ Contributions are welcome! Please fork the repository and submit a pull request 
 - v0.1.0: This is the initial version of `git-commit-wizard`. It lays the foundation for automated, guideline-adherent commit messages by leveraging OpenAI's API. Future improvements may include enhanced context analysis, better error handling, and additional customization options.
 - v0.1.2: Added support for the `-m` flag, allowing users to provide additional instructions for the AI-generated commit message.
 - v0.1.3: Introduced `-v`, `--version`, `-h`, and `--help` flags for improved usability.
+- v0.1.4: Added `-r`, `--revert` flag to revert the last commit while keeping changes staged.
 
 ## License
 
 This project is licensed under the MIT License.
+
+## Copyright
+
+Copyright © 2024 Denis Shimizu
