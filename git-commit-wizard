@@ -4,7 +4,7 @@
 
 set -euo pipefail
 
-VERSION="0.1.4"
+VERSION="0.1.5"
 
 OPENAI_MODEL="gpt-4o-mini"
 
@@ -15,14 +15,16 @@ usage() {
   echo "Make sure to stage your changes with 'git add' before running this tool."
   echo
   echo "Options:"
-  echo "  -h, --help      Show this help message and exit."
-  echo "  -v, --version   Show the script version and exit."
-  echo "  -m <message>    Provide additional context for the commit message."
-  echo "  -r, --revert    Revert the last commit, keep changes staged."
+  echo "  -h, --help       Show this help message and exit."
+  echo "  -v, --version    Show the script version and exit."
+  echo "  -m <message>     Provide additional context for the commit message."
+  echo "  -r, --revert     Revert the last commit, keep changes staged."
+  echo "  --no-signoff     Do not add signoff to the commit message."
 }
 
 additional_message=""
 revert=false
+signoff="--signoff"
 
 while [[ $# -gt 0 ]]; do
   case $1 in
@@ -45,6 +47,10 @@ while [[ $# -gt 0 ]]; do
       ;;
     -r|--revert)
       revert=true
+      shift
+      ;;
+    --no-signoff)
+      signoff=""
       shift
       ;;
     *)
@@ -128,6 +134,9 @@ Please generate a commit message that adheres to the Linux project commit guidel
   - Leave a blank line after the title.
   - Format the commit description body with lines no more than 50 characters.
   - Use clear and concise language that summarizes what was changed and why.
+  - Important: Do NOT wrap the message with triple backticks at the beginning or end.
+      Use markdown formatting when necessary within the message body, but do NOT enclose
+      the entire message in markdown code fences.
 
 Below is the diff of the staged changes:
 $diff_content
@@ -209,8 +218,8 @@ fi
 # Open the commit message in the chosen editor.
 $editor "$temp_msg_file"
 
-# Commit using the reviewed message and include --signoff.
-git commit --signoff -F "$temp_msg_file"
+# Commit using the reviewed message, include signoff only if enabled.
+git commit $signoff -F "$temp_msg_file"
 
 # Clean up the temporary file.
 rm "$temp_msg_file"

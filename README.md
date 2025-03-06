@@ -18,6 +18,7 @@
   - `-v`, `--version`: Display the version of the tool.
   - `-h`, `--help`: Show usage instructions.
   - `-r`, `--revert`: Revert the last commit while keeping changes staged.
+  - `--no-signoff`: Do not add signoff to the commit message
 
 ## Installation
 
