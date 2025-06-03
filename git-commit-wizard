@@ -132,6 +132,14 @@ fi
 # Determine the current branch for additional context.
 current_branch=$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "(initial commit)")
 
+project_root=$(git rev-parse --show-toplevel 2>/dev/null || echo "")
+readme_context=""
+if [[ -n "$project_root" && -f "$project_root/README.md" ]]; then
+  readme_context=$(head -n 200 "$project_root/README.md")
+else
+  readme_context="No README.md found in project root."
+fi
+
 # Prepare the prompt for the OpenAI API with extra context.
 prompt="Project: git-commit-wizard
 Origin URL: $origin_url
@@ -155,6 +163,9 @@ $diff_content
 
 Additionally, here are the original contents of the files before the changes for context:
 $originals
+
+README.md content for context:
+$readme_context
 
 Additional user-provided context: $additional_message
 
