@@ -4,7 +4,7 @@
 
 set -euo pipefail
 
-VERSION="0.1.5"
+VERSION="0.1.6"
 
 OPENAI_MODEL="gpt-4o-mini"
 
@@ -20,11 +20,13 @@ usage() {
   echo "  -m <message>     Provide additional context for the commit message."
   echo "  -r, --revert     Revert the last commit, keep changes staged."
   echo "  --no-signoff     Do not add signoff to the commit message."
+  echo "  --bullet         Format the commit body as bullet points."
 }
 
 additional_message=""
 revert=false
 signoff="--signoff"
+bullet=false
 
 while [[ $# -gt 0 ]]; do
   case $1 in
@@ -51,6 +53,10 @@ while [[ $# -gt 0 ]]; do
       ;;
     --no-signoff)
       signoff=""
+      shift
+      ;;
+    --bullet)
+      bullet=true
       shift
       ;;
     *)
@@ -94,6 +100,11 @@ fi
 # Retrieve the repository's origin URL (if available).
 origin_url=$(git config --get remote.origin.url || echo "Not available")
 
+bullet_instruction=""
+if $bullet; then
+  bullet_instruction="- Format the commit description body as concise bullet points."
+fi
+
 # Collect the diff of staged changes.
 diff_content=$(git diff --cached)
 
@@ -134,6 +145,7 @@ Please generate a commit message that adheres to the Linux project commit guidel
   - Leave a blank line after the title.
   - Format the commit description body with lines no more than 50 characters.
   - Use clear and concise language that summarizes what was changed and why.
+  $bullet_instruction
   - Important: Do NOT wrap the message with triple backticks at the beginning or end.
       Use markdown formatting when necessary within the message body, but do NOT enclose
       the entire message in markdown code fences.
