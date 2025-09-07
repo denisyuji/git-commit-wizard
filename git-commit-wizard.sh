@@ -4,7 +4,7 @@
 
 set -euo pipefail
 
-VERSION="0.1.6"
+VERSION="0.1.7"
 
 OPENAI_MODEL="gpt-4o-mini"
 
@@ -20,13 +20,13 @@ usage() {
   echo "  -m <message>     Provide additional context for the commit message."
   echo "  -r, --revert     Revert the last commit, keep changes staged."
   echo "  --no-signoff     Do not add signoff to the commit message."
-  echo "  --bullet         Format the commit body as bullet points."
+  echo "  --no-bullets     Do not format the commit body as bullet points."
 }
 
 additional_message=""
 revert=false
 signoff="--signoff"
-bullet=false
+bullet=true
 
 while [[ $# -gt 0 ]]; do
   case $1 in
@@ -55,8 +55,8 @@ while [[ $# -gt 0 ]]; do
       signoff=""
       shift
       ;;
-    --bullet)
-      bullet=true
+    --no-bullets)
+      bullet=false
       shift
       ;;
     *)
@@ -140,6 +140,13 @@ else
   readme_context="No README.md found in project root."
 fi
 
+agent_context=""
+if [[ -n "$project_root" && -f "$project_root/AGENT.md" ]]; then
+  agent_context=$(head -n 200 "$project_root/AGENT.md")
+else
+  agent_context="No AGENT.md found in project root."
+fi
+
 # Prepare the prompt for the OpenAI API with extra context.
 prompt="Project: git-commit-wizard
 Origin URL: $origin_url
@@ -166,6 +173,9 @@ $originals
 
 README.md content for context:
 $readme_context
+
+AGENT.md content for context:
+$agent_context
 
 Additional user-provided context: $additional_message
 
