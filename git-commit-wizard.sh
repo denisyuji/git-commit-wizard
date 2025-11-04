@@ -19,13 +19,13 @@ usage() {
   echo "  -v, --version    Show the script version and exit."
   echo "  -m <message>     Provide additional context for the commit message."
   echo "  -r, --revert     Revert the last commit, keep changes staged."
-  echo "  --no-signoff     Do not add signoff to the commit message."
+  echo "  --signoff        Add signoff to the commit message."
   echo "  --no-bullets     Do not format the commit body as bullet points."
 }
 
 additional_message=""
 revert=false
-signoff="--signoff"
+signoff=""
 bullet=true
 
 while [[ $# -gt 0 ]]; do
@@ -51,8 +51,8 @@ while [[ $# -gt 0 ]]; do
       revert=true
       shift
       ;;
-    --no-signoff)
-      signoff=""
+    --signoff)
+      signoff="--signoff"
       shift
       ;;
     --no-bullets)
@@ -160,6 +160,7 @@ Please generate a commit message that adheres to the Linux project commit guidel
   - Leave a blank line after the title.
   - Format the commit description body with lines no more than 50 characters.
   - Use clear and concise language that summarizes what was changed and why.
+  - If the change is small and straightforward, it is acceptable to provide a one-line commit message (title only, without body).
   $bullet_instruction
   - Important: Do NOT wrap the message with triple backticks at the beginning or end.
       Use markdown formatting when necessary within the message body, but do NOT enclose
